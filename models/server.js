@@ -1,14 +1,25 @@
 import express from 'express'
 import cors from 'cors'
 import routerUser from '../routes/user.js'
+// import dbConection from '../database/config.js'
 export class Server {
   constructor () {
     this.port = process.env.PORT
     this.app = express()
 
+    this.paths = {
+      users: '/api/users'
+    }
+
+    // this.conectDB()
+
     this.middlewares()
     this.routes()
   }
+
+  // async conectDB () {
+  //   await dbConection()
+  // }
 
   middlewares () {
     this.app.use(cors())
@@ -17,14 +28,16 @@ export class Server {
   }
 
   routes () {
-    this.app.use('/api/users', routerUser)
+    this.app.use(this.paths.users, routerUser)
   }
 
   async getLocalIp () {
     return import('os')
       .then((os) => {
         const networkInterfaces = os.networkInterfaces()
-        return networkInterfaces.en0[1].address
+        const ipv4 = networkInterfaces.en0.find(network => network.family === 'IPv4')
+
+        return ipv4.address
       })
   }
 
