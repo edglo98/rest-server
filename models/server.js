@@ -35,7 +35,9 @@ export class Server {
     return import('os')
       .then((os) => {
         const networkInterfaces = os.networkInterfaces()
-        const ipv4 = networkInterfaces.en0.find(network => network.family === 'IPv4')
+        // en0 === ios , Ethernet === windows
+        const platform = networkInterfaces.en0 ? 'en0' : 'Ethernet'
+        const ipv4 = networkInterfaces[platform].find(network => network.family === 'IPv4')
 
         return ipv4.address
       })
